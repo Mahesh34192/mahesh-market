@@ -1,1 +1,515 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mahesh Demo Bank</title>
 
+<style>
+*{box-sizing:border-box}
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f2f5f9;
+    color:#222;
+}
+header{
+    background:#0757a8;
+    color:white;
+    padding:20px;
+    text-align:center;
+}
+header h1{margin:0;font-size:25px}
+header p{margin:6px 0 0}
+.container{
+    max-width:600px;
+    margin:auto;
+    padding:15px;
+}
+.card{
+    background:white;
+    border-radius:15px;
+    padding:18px;
+    margin-bottom:15px;
+    box-shadow:0 3px 12px #0001;
+}
+.balance{
+    background:linear-gradient(135deg,#0757a8,#1685d9);
+    color:white;
+}
+.balance h2{font-size:32px;margin:8px 0}
+.menu{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+button{
+    width:100%;
+    border:0;
+    border-radius:12px;
+    padding:14px;
+    background:#0757a8;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+}
+.menu button{
+    background:white;
+    color:#0757a8;
+    box-shadow:0 2px 8px #0002;
+}
+input,select{
+    width:100%;
+    padding:13px;
+    margin:7px 0 12px;
+    border:1px solid #ccc;
+    border-radius:9px;
+    font-size:15px;
+}
+.hidden{display:none}
+.back{
+    background:#555;
+    margin-bottom:10px;
+}
+.success{
+    background:#e7f8ed;
+    color:#08752c;
+    padding:12px;
+    border-radius:10px;
+    margin-top:10px;
+}
+.history{
+    border-bottom:1px solid #ddd;
+    padding:12px 0;
+}
+.small{font-size:13px;color:#666}
+footer{
+    text-align:center;
+    padding:20px;
+    color:#777;
+    font-size:13px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🏦 Mahesh Demo Bank</h1>
+    <p>Demo Banking Application</p>
+</header>
+
+<div class="container">
+
+<!-- HOME -->
+<section id="home">
+
+<div class="card balance">
+    <div>💰 Available Balance</div>
+    <h2 id="balance">රු. 100,000.00</h2>
+    <div>Account: XXXX XXXX 1234</div>
+</div>
+
+<div class="card">
+<h3>⚡ ඉක්මන් සේවා</h3>
+
+<div class="menu">
+<button onclick="showPage('transfer')">💸<br>මුදල් යවන්න</button>
+<button onclick="showPage('reload')">📱<br>Reload</button>
+<button onclick="showPage('bills')">🧾<br>Bill Payment</button>
+<button onclick="showPage('account')">🏦<br>Bank Account</button>
+<button onclick="showPage('beneficiary')">👤<br>Beneficiary</button>
+<button onclick="showPage('history')">📜<br>History</button>
+</div>
+</div>
+
+</section>
+
+
+<!-- TRANSFER -->
+<section id="transfer" class="hidden">
+<div class="card">
+
+<button class="back" onclick="showPage('home')">← ආපසු</button>
+
+<h2>💸 මුදල් යවන්න</h2>
+
+<label>බැංකුව</label>
+<select id="transferBank">
+<option>People's Bank</option>
+<option>Bank of Ceylon</option>
+<option>Commercial Bank</option>
+<option>Sampath Bank</option>
+<option>HNB</option>
+</select>
+
+<label>ගිණුම් අංකය</label>
+<input id="receiverAccount" placeholder="ගිණුම් අංකය">
+
+<label>ලබන්නාගේ නම</label>
+<input id="receiverName" placeholder="නම">
+
+<label>මුදල</label>
+<input id="transferAmount" type="number" placeholder="රු.">
+
+<label>Reference</label>
+<input id="transferReference" placeholder="විස්තරය">
+
+<button onclick="transferMoney()">Confirm Transfer</button>
+
+<div id="transferResult"></div>
+
+</div>
+</section>
+
+
+<!-- RELOAD -->
+<section id="reload" class="hidden">
+<div class="card">
+
+<button class="back" onclick="showPage('home')">← ආපසු</button>
+
+<h2>📱 Mobile Reload</h2>
+
+<label>Network</label>
+<select id="network">
+<option>Dialog</option>
+<option>Mobitel</option>
+<option>Hutch</option>
+<option>Airtel</option>
+</select>
+
+<label>Phone Number</label>
+<input id="phone" type="tel" placeholder="07XXXXXXXX">
+
+<label>Reload Amount</label>
+<input id="reloadAmount" type="number" placeholder="රු.">
+
+<button onclick="reloadPhone()">Reload Now</button>
+
+<div id="reloadResult"></div>
+
+</div>
+</section>
+
+
+<!-- BILLS -->
+<section id="bills" class="hidden">
+<div class="card">
+
+<button class="back" onclick="showPage('home')">← ආපසු</button>
+
+<h2>🧾 Bill Payment</h2>
+
+<label>Bill Type</label>
+<select id="billType">
+<option>Electricity Bill</option>
+<option>Water Bill</option>
+<option>Internet Bill</option>
+<option>Telephone Bill</option>
+</select>
+
+<label>Account / Reference Number</label>
+<input id="billAccount" placeholder="Account number">
+
+<label>Amount</label>
+<input id="billAmount" type="number" placeholder="රු.">
+
+<button onclick="payBill()">Pay Bill</button>
+
+<div id="billResult"></div>
+
+</div>
+</section>
+
+
+<!-- ACCOUNT -->
+<section id="account" class="hidden">
+<div class="card">
+
+<button class="back" onclick="showPage('home')">← ආපසු</button>
+
+<h2>🏦 මගේ Bank Account</h2>
+
+<p class="small">
+මෙය Demo App එකක් බැවින් මෙහි දත්ත සැබෑ බැංකු ගනුදෙනු සඳහා භාවිතා නොවේ.
+</p>
+
+<label>Account Holder Name</label>
+<input id="accountName" placeholder="ඔබගේ නම">
+
+<label>Bank</label>
+<select id="myBank">
+<option>People's Bank</option>
+<option>Bank of Ceylon</option>
+<option>Commercial Bank</option>
+<option>Sampath Bank</option>
+<option>HNB</option>
+</select>
+
+<label>Account Number</label>
+<input id="myAccount" placeholder="ගිණුම් අංකය">
+
+<label>Branch</label>
+<input id="branch" placeholder="ශාඛාව">
+
+<button onclick="saveAccount()">Save Account</button>
+
+<div id="accountResult"></div>
+
+</div>
+</section>
+
+
+<!-- BENEFICIARY -->
+<section id="beneficiary" class="hidden">
+<div class="card">
+
+<button class="back" onclick="showPage('home')">← ආපසු</button>
+
+<h2>👤 Beneficiary</h2>
+
+<label>Name</label>
+<input id="benName" placeholder="ලබන්නාගේ නම">
+
+<label>Bank</label>
+<select id="benBank">
+<option>People's Bank</option>
+<option>Bank of Ceylon</option>
+<option>Commercial Bank</option>
+<option>Sampath Bank</option>
+<option>HNB</option>
+</select>
+
+<label>Account Number</label>
+<input id="benAccount" placeholder="ගිණුම් අංකය">
+
+<button onclick="saveBeneficiary()">Add Beneficiary</button>
+
+<div id="beneficiaryResult"></div>
+
+</div>
+</section>
+
+
+<!-- HISTORY -->
+<section id="history" class="hidden">
+<div class="card">
+
+<button class="back" onclick="showPage('home')">← ආපසු</button>
+
+<h2>📜 Transaction History</h2>
+
+<div id="historyList">
+<p class="small">තවම ගනුදෙනු නොමැත.</p>
+</div>
+
+</div>
+</section>
+
+<footer>
+Mahesh Demo Bank © 2026<br>
+⚠️ Demo / Prototype Only
+</footer>
+
+</div>
+
+
+<script>
+
+let balance = 100000;
+let history = [];
+
+function showPage(page){
+
+    document.querySelectorAll("section").forEach(s=>{
+        s.classList.add("hidden");
+    });
+
+    document.getElementById(page).classList.remove("hidden");
+
+    if(page==="history"){
+        displayHistory();
+    }
+}
+
+function updateBalance(){
+    document.getElementById("balance").innerText =
+    "රු. " + balance.toLocaleString("en-US",{minimumFractionDigits:2});
+}
+
+function addHistory(type, amount, details){
+
+    history.unshift({
+        type:type,
+        amount:amount,
+        details:details,
+        date:new Date().toLocaleString()
+    });
+}
+
+function transferMoney(){
+
+    let account=document.getElementById("receiverAccount").value;
+    let name=document.getElementById("receiverName").value;
+    let amount=Number(document.getElementById("transferAmount").value);
+    let bank=document.getElementById("transferBank").value;
+
+    if(!account || !name || !amount){
+        alert("කරුණාකර සියලු තොරතුරු ඇතුළත් කරන්න.");
+        return;
+    }
+
+    if(amount<=0 || amount>balance){
+        alert("ප්‍රමාණවත් Demo Balance එකක් නොමැත.");
+        return;
+    }
+
+    balance-=amount;
+    updateBalance();
+
+    addHistory("💸 Money Transfer",amount,
+    name+" - "+bank+" - "+account);
+
+    document.getElementById("transferResult").innerHTML=
+    `<div class="success">
+    ✅ Demo Transfer Successful<br>
+    ලබන්නා: ${name}<br>
+    මුදල: රු. ${amount.toLocaleString()}
+    </div>`;
+
+}
+
+
+function reloadPhone(){
+
+    let phone=document.getElementById("phone").value;
+    let amount=Number(document.getElementById("reloadAmount").value);
+    let network=document.getElementById("network").value;
+
+    if(!phone || !amount){
+        alert("Phone number සහ amount ඇතුළත් කරන්න.");
+        return;
+    }
+
+    if(amount<=0 || amount>balance){
+        alert("ප්‍රමාණවත් Demo Balance එකක් නොමැත.");
+        return;
+    }
+
+    balance-=amount;
+    updateBalance();
+
+    addHistory("📱 Mobile Reload",amount,
+    network+" - "+phone);
+
+    document.getElementById("reloadResult").innerHTML=
+    `<div class="success">
+    ✅ Demo Reload Successful<br>
+    ${network}<br>
+    ${phone}<br>
+    රු. ${amount.toLocaleString()}
+    </div>`;
+}
+
+
+function payBill(){
+
+    let type=document.getElementById("billType").value;
+    let acc=document.getElementById("billAccount").value;
+    let amount=Number(document.getElementById("billAmount").value);
+
+    if(!acc || !amount){
+        alert("Bill details ඇතුළත් කරන්න.");
+        return;
+    }
+
+    if(amount<=0 || amount>balance){
+        alert("ප්‍රමාණවත් Demo Balance එකක් නොමැත.");
+        return;
+    }
+
+    balance-=amount;
+    updateBalance();
+
+    addHistory("🧾 Bill Payment",amount,
+    type+" - "+acc);
+
+    document.getElementById("billResult").innerHTML=
+    `<div class="success">
+    ✅ Demo Bill Payment Successful<br>
+    ${type}<br>
+    රු. ${amount.toLocaleString()}
+    </div>`;
+}
+
+
+function saveAccount(){
+
+    let name=document.getElementById("accountName").value;
+    let bank=document.getElementById("myBank").value;
+    let acc=document.getElementById("myAccount").value;
+    let branch=document.getElementById("branch").value;
+
+    if(!name || !acc){
+        alert("නම සහ ගිණුම් අංකය ඇතුළත් කරන්න.");
+        return;
+    }
+
+    document.getElementById("accountResult").innerHTML=
+    `<div class="success">
+    ✅ Demo Account Saved<br>
+    නම: ${name}<br>
+    බැංකුව: ${bank}<br>
+    ගිණුම: ****${acc.slice(-4)}<br>
+    ශාඛාව: ${branch}
+    </div>`;
+}
+
+
+function saveBeneficiary(){
+
+    let name=document.getElementById("benName").value;
+    let bank=document.getElementById("benBank").value;
+    let acc=document.getElementById("benAccount").value;
+
+    if(!name || !acc){
+        alert("Beneficiary details ඇතුළත් කරන්න.");
+        return;
+    }
+
+    document.getElementById("beneficiaryResult").innerHTML=
+    `<div class="success">
+    ✅ Beneficiary Added<br>
+    ${name}<br>
+    ${bank}<br>
+    ****${acc.slice(-4)}
+    </div>`;
+}
+
+
+function displayHistory(){
+
+    let list=document.getElementById("historyList");
+
+    if(history.length===0){
+        list.innerHTML="<p class='small'>තවම ගනුදෙනු නොමැත.</p>";
+        return;
+    }
+
+    list.innerHTML=history.map(x=>`
+    <div class="history">
+        <b>${x.type}</b><br>
+        ${x.details}<br>
+        <b>රු. ${x.amount.toLocaleString()}</b><br>
+        <span class="small">${x.date}</span>
+    </div>
+    `).join("");
+}
+
+updateBalance();
+
+</script>
+
+</body>
+</html>
