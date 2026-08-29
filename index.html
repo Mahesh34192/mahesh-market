@@ -1,1 +1,224 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lanka Pay</title>
 
+<style>
+    * {
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+
+    body {
+        margin: 0;
+        background: #f2f5f9;
+    }
+
+    .app {
+        max-width: 420px;
+        margin: auto;
+        min-height: 100vh;
+        background: white;
+    }
+
+    .header {
+        background: #0757a8;
+        color: white;
+        padding: 25px 20px;
+        border-radius: 0 0 25px 25px;
+    }
+
+    .header h1 {
+        margin: 0 0 15px;
+    }
+
+    .balance {
+        font-size: 30px;
+        font-weight: bold;
+    }
+
+    .content {
+        padding: 20px;
+    }
+
+    .card {
+        background: white;
+        padding: 20px;
+        border-radius: 18px;
+        box-shadow: 0 3px 15px #00000015;
+        margin-bottom: 20px;
+    }
+
+    input {
+        width: 100%;
+        padding: 14px;
+        margin: 8px 0 15px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        font-size: 16px;
+    }
+
+    button {
+        width: 100%;
+        padding: 15px;
+        border: 0;
+        border-radius: 12px;
+        background: #0757a8;
+        color: white;
+        font-size: 17px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .notification {
+        display: none;
+        padding: 15px;
+        border-radius: 12px;
+        background: #e8f7ed;
+        margin-top: 15px;
+    }
+
+    .transaction {
+        padding: 12px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .demo {
+        text-align: center;
+        font-size: 12px;
+        color: #777;
+        margin-top: 15px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <div class="header">
+        <h1>💳 Lanka Pay</h1>
+        <div>Available Balance</div>
+        <div class="balance" id="balance">Rs. 25,000.00</div>
+    </div>
+
+    <div class="content">
+
+        <div class="card">
+            <h2>💸 Send Money</h2>
+
+            <label>Recipient Phone Number</label>
+            <input
+                type="tel"
+                id="phone"
+                placeholder="07XXXXXXXX"
+                maxlength="10"
+            >
+
+            <label>Amount</label>
+            <input
+                type="number"
+                id="amount"
+                placeholder="Enter amount"
+            >
+
+            <button onclick="sendMoney()">Send Money</button>
+
+            <div class="notification" id="notification"></div>
+
+            <div class="demo">
+                DEMO TRANSACTION
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📜 Transactions</h2>
+            <div id="transactions">
+                <div class="transaction">
+                    Welcome to Lanka Pay
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+let balance = 25000;
+
+function sendMoney() {
+
+    const phone = document.getElementById("phone").value.trim();
+    const amount = Number(document.getElementById("amount").value);
+
+    if (!/^07[0-9]{8}$/.test(phone)) {
+        alert("කරුණාකර නිවැරදි phone number එකක් ඇතුළත් කරන්න.");
+        return;
+    }
+
+    if (!amount || amount <= 0) {
+        alert("කරුණාකර නිවැරදි මුදලක් ඇතුළත් කරන්න.");
+        return;
+    }
+
+    if (amount > balance) {
+        alert("ප්‍රමාණවත් balance එකක් නැහැ.");
+        return;
+    }
+
+    balance -= amount;
+
+    document.getElementById("balance").innerText =
+        "Rs. " + balance.toLocaleString("en-US", {
+            minimumFractionDigits: 2
+        });
+
+    const ref =
+        "LP" + Math.floor(100000 + Math.random() * 900000);
+
+    const time = new Date().toLocaleString();
+
+    // Recipient notification — DEMO ONLY
+    const message =
+        "🔔 Lanka Pay Demo<br><br>" +
+        "ඔබට <b>Rs. " + amount.toLocaleString() +
+        "</b>ක් ලැබී ඇත.<br>" +
+        "From: Lanka Pay Demo User<br>" +
+        "Ref: " + ref;
+
+    document.getElementById("notification").innerHTML = message;
+    document.getElementById("notification").style.display = "block";
+
+    // Add transaction history
+    const transaction =
+        document.createElement("div");
+
+    transaction.className = "transaction";
+
+    transaction.innerHTML =
+        "💸 Sent Rs. " +
+        amount.toLocaleString() +
+        "<br>" +
+        "<small>To: " + phone +
+        "<br>Ref: " + ref +
+        "<br>" + time +
+        "</small>";
+
+    document
+        .getElementById("transactions")
+        .prepend(transaction);
+
+    // Clear fields
+    document.getElementById("phone").value = "";
+    document.getElementById("amount").value = "";
+
+}
+
+</script>
+
+</body>
+</html>
