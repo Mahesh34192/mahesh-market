@@ -1,1 +1,200 @@
+import 'package:flutter/material.dart';
 
+void main() {
+  runApp(const PeoplesBankApp());
+}
+
+class PeoplesBankApp extends StatelessWidget {
+  const PeoplesBankApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Peoples Bank Mobile',
+      theme: ThemeData(
+        primarySwatch: Colors.red,
+        useMaterial3: true,
+      ),
+      home: const HomeScreen(),
+    );
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  // Balance සඟවා තැබීමට සහ පෙන්වීමට Variable එකක්
+  bool _isBalanceVisible = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFD32F2F),
+        title: const Text(
+          "People's Bank Mobile",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.notifications, color: Colors.white),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAlignment.start,
+          children: [
+            // පරිශීලකයා පිළිගැනීම
+            const Text(
+              'ආයුබෝවන්, නිමල්!',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 15),
+
+            // Account Balance Card (ගිණුම් ශේෂය පෙන්වන කාඩ්පත)
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              color: const Color(0xFFD32F2F),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'ඉතිරි කිරීමේ ගිණුම',
+                          style: TextStyle(color: Colors.white70, fontSize: 16),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _isBalanceVisible = !_isBalanceVisible;
+                            });
+                          },
+                          icon: Icon(
+                            _isBalanceVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      _isBalanceVisible
+                          ? 'LKR 125,450.00'
+                          : 'LKR *********',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'Acc No: 014-2001-5-1234567',
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 25),
+
+            // Quick Actions (ක්ෂණික සේවාවන්)
+            const Text(
+              'ක්ෂණික සේවාවන්',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 15),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildActionButton(Icons.send, 'Transfer', Colors.blue),
+                _buildActionButton(Icons.receipt_long, 'Pay Bills', Colors.orange),
+                _buildActionButton(Icons.qr_code_scanner, 'LANKAQR', Colors.purple),
+                _buildActionButton(Icons.history, 'History', Colors.green),
+              ],
+            ),
+            const SizedBox(height: 25),
+
+            // Recent Transactions (මෑත ගනුදෙනු)
+            const Text(
+              'මෑත ගනුදෙනු',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            _buildTransactionItem('Electricity Bill', '- LKR 3,200.00', 'Today', Colors.red),
+            _buildTransactionItem('Salary Deposit', '+ LKR 85,000.00', 'Yesterday', Colors.green),
+            _buildTransactionItem('Supermarket Pay', '- LKR 4,150.00', '25 Aug', Colors.red),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Quick Action Button Component
+  Widget _buildActionButton(IconData icon, String label, Color color) {
+    return Column(
+      children: [
+        CircleAvatar(
+          radius: 28,
+          backgroundColor: color.withOpacity(0.15),
+          child: Icon(icon, color: color, size: 28),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: const TextStyle(fontWeight: FontWeight.w500),
+        ),
+      ],
+    );
+  }
+
+  // Transaction Item Component
+  Widget _buildTransactionItem(
+      String title, String amount, String date, Color amountColor) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 5),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: amountColor.withOpacity(0.1),
+          child: Icon(
+            amountColor == Colors.green
+                ? Icons.arrow_downward
+                : Icons.arrow_upward,
+            color: amountColor,
+          ),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(date),
+        trailing: Text(
+          amount,
+          style: TextStyle(
+            color: amountColor,
+            fontWeight: FontWeight.bold,
+            fontSize: 15,
+          ),
+        ),
+      ),
+    );
+  }
+}
