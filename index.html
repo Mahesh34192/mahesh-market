@@ -1,1 +1,391 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ceylon Pay - Demo</title>
 
+<style>
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f1f5f9;
+  color:#172033;
+}
+
+header{
+  background:#063b7a;
+  color:white;
+  text-align:center;
+  padding:20px;
+}
+
+.container{
+  max-width:600px;
+  margin:auto;
+  padding:18px;
+}
+
+.demo{
+  background:#fff3cd;
+  color:#765b00;
+  padding:12px;
+  border-radius:10px;
+  text-align:center;
+  margin-bottom:15px;
+}
+
+.balance{
+  background:linear-gradient(135deg,#063b7a,#0875d1);
+  color:white;
+  padding:25px;
+  border-radius:18px;
+  margin-bottom:20px;
+}
+
+.balance h2{
+  font-size:32px;
+  margin:10px 0;
+}
+
+.services{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+  margin-bottom:20px;
+}
+
+.service{
+  background:white;
+  padding:20px;
+  text-align:center;
+  border-radius:15px;
+  box-shadow:0 3px 10px #0001;
+  cursor:pointer;
+}
+
+.icon{
+  font-size:30px;
+  margin-bottom:8px;
+}
+
+.card{
+  background:white;
+  padding:20px;
+  border-radius:16px;
+  margin-bottom:18px;
+  box-shadow:0 3px 12px #0001;
+}
+
+.hidden{
+  display:none;
+}
+
+input{
+  width:100%;
+  padding:13px;
+  margin:7px 0;
+  border:1px solid #ccd3dd;
+  border-radius:9px;
+  font-size:15px;
+  box-sizing:border-box;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  margin-top:8px;
+  border:0;
+  border-radius:9px;
+  background:#063b7a;
+  color:white;
+  font-size:16px;
+}
+
+.sms{
+  background:#eef6ff;
+  border-left:5px solid #0875d1;
+  padding:15px;
+  border-radius:10px;
+  margin-top:10px;
+}
+
+.sms small{
+  display:block;
+  color:#667085;
+  margin-top:8px;
+}
+
+.success{
+  color:#16803c;
+  font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>💳 Ceylon Pay</h1>
+  <p>Digital Payment Demo</p>
+</header>
+
+<div class="container">
+
+  <div class="demo">
+    ⚠️ DEMO VERSION — මෙය සැබෑ බැංකු සේවාවක් හෝ SMS සේවාවක් නොවේ.
+  </div>
+
+  <div class="balance">
+    <small>මගේ Demo Balance</small>
+    <h2 id="balance">රු. 100,000.00</h2>
+    <p>Account: **** **** 2588</p>
+  </div>
+
+  <div class="services">
+
+    <div class="service" onclick="openBox('send')">
+      <div class="icon">💸</div>
+      <b>මුදල් යවන්න</b>
+    </div>
+
+    <div class="service" onclick="openBox('messages')">
+      <div class="icon">📩</div>
+      <b>Messages</b>
+    </div>
+
+  </div>
+
+  <!-- SEND MONEY -->
+
+  <div id="send" class="card hidden">
+
+    <h3>💸 මුදල් යවන්න</h3>
+
+    <input
+      id="phone"
+      type="tel"
+      placeholder="ග්‍රාහකයාගේ Phone Number"
+    >
+
+    <input
+      id="name"
+      type="text"
+      placeholder="ග්‍රාහකයාගේ නම"
+    >
+
+    <input
+      id="amount"
+      type="number"
+      placeholder="මුදල (රු.)"
+    >
+
+    <input
+      id="pin"
+      type="password"
+      maxlength="4"
+      placeholder="Demo PIN"
+    >
+
+    <button onclick="sendMoney()">
+      💸 මුදල් යවන්න
+    </button>
+
+  </div>
+
+  <!-- MESSAGES -->
+
+  <div id="messages" class="card hidden">
+
+    <h3>📩 Messages</h3>
+
+    <div id="smsList">
+
+      <div class="sms">
+        <b>💳 Ceylon Pay DEMO</b>
+        <p>Demo Messages සේවාව සූදානම්.</p>
+        <small>Demo message</small>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+let balance = 100000;
+
+
+/* Open Section */
+
+function openBox(id){
+
+  document
+    .querySelectorAll(".card")
+    .forEach(x => x.classList.add("hidden"));
+
+  document
+    .getElementById(id)
+    .classList.remove("hidden");
+}
+
+
+/* Update Balance */
+
+function updateBalance(){
+
+  document.getElementById("balance").innerText =
+    "රු. " +
+    balance.toLocaleString("en-US",{
+      minimumFractionDigits:2
+    });
+}
+
+
+/* Send Money */
+
+function sendMoney(){
+
+  const phone =
+    document.getElementById("phone").value.trim();
+
+  const name =
+    document.getElementById("name").value.trim();
+
+  const amount =
+    Number(document.getElementById("amount").value);
+
+  const pin =
+    document.getElementById("pin").value.trim();
+
+
+  if(!phone || !name || !amount || !pin){
+
+    alert(
+      "කරුණාකර සියලු තොරතුරු ඇතුළත් කරන්න."
+    );
+
+    return;
+  }
+
+
+  if(pin.length !== 4){
+
+    alert(
+      "Demo PIN එක අංක 4ක් විය යුතුයි."
+    );
+
+    return;
+  }
+
+
+  if(amount <= 0){
+
+    alert(
+      "නිවැරදි මුදලක් ඇතුළත් කරන්න."
+    );
+
+    return;
+  }
+
+
+  if(amount > balance){
+
+    alert(
+      "Demo balance එක ප්‍රමාණවත් නැහැ."
+    );
+
+    return;
+  }
+
+
+  /* Demo balance */
+
+  balance -= amount;
+
+  updateBalance();
+
+
+  /* Demo SMS */
+
+  createDemoSMS(
+    phone,
+    name,
+    amount
+  );
+
+
+  alert(
+    "✅ Demo Transfer Successful!\n\n" +
+    "📩 Demo SMS එක Messages එකට එකතු කළා.\n\n" +
+    "⚠️ මෙය සැබෑ SMS එකක් නොවේ."
+  );
+
+
+  document.getElementById("phone").value="";
+  document.getElementById("name").value="";
+  document.getElementById("amount").value="";
+  document.getElementById("pin").value="";
+
+
+  openBox("messages");
+}
+
+
+/* Create Demo SMS */
+
+function createDemoSMS(
+  phone,
+  name,
+  amount
+){
+
+  const list =
+    document.getElementById("smsList");
+
+  const sms =
+    document.createElement("div");
+
+  sms.className="sms";
+
+  const time =
+    new Date().toLocaleString("si-LK");
+
+  sms.innerHTML =
+    "<b>📩 Ceylon Pay DEMO</b>" +
+
+    "<p>" +
+
+    "ග්‍රාහකයා: " + name +
+
+    "<br>" +
+
+    "Phone: " + phone +
+
+    "<br>" +
+
+    "Demo Amount: රු." +
+    amount.toLocaleString() +
+
+    "<br><br>" +
+
+    "<span class='success'>" +
+    "DEMO TRANSFER" +
+    "</span>" +
+
+    "</p>" +
+
+    "<small>" +
+    time +
+    " — මෙය Demo message එකකි." +
+    "</small>";
+
+  list.prepend(sms);
+}
+
+</script>
+
+</body>
+</html>
