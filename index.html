@@ -1,1 +1,991 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Ceylon Pay Demo</title>
+
+<style>
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f2f5f9;
+  color:#172033;
+}
+
+header{
+  background:#063b7a;
+  color:white;
+  text-align:center;
+  padding:20px;
+}
+
+header h1{
+  font-size:28px;
+}
+
+header p{
+  margin-top:5px;
+  opacity:.9;
+}
+
+.container{
+  max-width:650px;
+  margin:auto;
+  padding:18px;
+}
+
+.demo{
+  background:#fff3cd;
+  color:#765b00;
+  padding:12px;
+  border-radius:10px;
+  text-align:center;
+  margin-bottom:18px;
+}
+
+.balance{
+  background:linear-gradient(135deg,#063b7a,#0875d1);
+  color:white;
+  padding:25px;
+  border-radius:20px;
+  margin-bottom:20px;
+  box-shadow:0 8px 20px #0002;
+}
+
+.balance small{
+  opacity:.8;
+}
+
+.balance h2{
+  font-size:34px;
+  margin-top:10px;
+}
+
+.services{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+  margin-bottom:20px;
+}
+
+.service{
+  background:white;
+  padding:22px 10px;
+  border-radius:16px;
+  text-align:center;
+  box-shadow:0 3px 12px #0001;
+  cursor:pointer;
+}
+
+.service:active{
+  transform:scale(.97);
+}
+
+.icon{
+  font-size:32px;
+  margin-bottom:8px;
+}
+
+.card{
+  background:white;
+  padding:20px;
+  border-radius:17px;
+  margin-bottom:18px;
+  box-shadow:0 3px 12px #0001;
+}
+
+.hidden{
+  display:none;
+}
+
+.card h3{
+  margin-bottom:15px;
+}
+
+input,select{
+  width:100%;
+  padding:14px;
+  margin:7px 0;
+  border:1px solid #ccd3dd;
+  border-radius:9px;
+  font-size:15px;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  border:0;
+  border-radius:9px;
+  background:#063b7a;
+  color:white;
+  font-size:16px;
+  margin-top:8px;
+  cursor:pointer;
+}
+
+button:active{
+  transform:scale(.98);
+}
+
+.transaction{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:14px 0;
+  border-bottom:1px solid #eee;
+}
+
+.sent{
+  color:#d62828;
+}
+
+.received{
+  color:#16803c;
+}
+
+.message{
+  background:#eef6ff;
+  border-left:5px solid #0875d1;
+  padding:14px;
+  border-radius:10px;
+  margin-bottom:10px;
+}
+
+.message small{
+  display:block;
+  color:#667085;
+  margin-top:8px;
+}
+
+footer{
+  text-align:center;
+  color:#667085;
+  padding:25px;
+  font-size:13px;
+}
+
+</style>
+</head>
+
+
+<body>
+
+<header>
+
+<h1>💳 Ceylon Pay</h1>
+
+<p>Digital Payment Demo</p>
+
+</header>
+
+
+<div class="container">
+
+
+<div class="demo">
+
+⚠️ DEMO VERSION — මෙය සැබෑ බැංකු/payment service එකක් නොවේ.
+
+</div>
+
+
+<!-- BALANCE -->
+
+<div class="balance">
+
+<small>මගේ Demo Balance</small>
+
+<h2 id="balance">
+රු. 100,000.00
+</h2>
+
+<p>
+Account: **** **** 2588
+</p>
+
+</div>
+
+
+<!-- SERVICES -->
+
+<div class="services">
+
+
+<div class="service"
+onclick="openSection('transfer')">
+
+<div class="icon">💸</div>
+
+<b>මුදල් Transfer</b>
+
+</div>
+
+
+<div class="service"
+onclick="openSection('reload')">
+
+<div class="icon">📱</div>
+
+<b>Mobile Reload</b>
+
+</div>
+
+
+<div class="service"
+onclick="openSection('bill')">
+
+<div class="icon">🧾</div>
+
+<b>Bill Payment</b>
+
+</div>
+
+
+<div class="service"
+onclick="openSection('bank')">
+
+<div class="icon">🏦</div>
+
+<b>Bank Account</b>
+
+</div>
+
+
+<div class="service"
+onclick="openSection('history')">
+
+<div class="icon">📜</div>
+
+<b>History</b>
+
+</div>
+
+
+<div class="service"
+onclick="openSection('messages')">
+
+<div class="icon">🔔</div>
+
+<b>Messages</b>
+
+</div>
+
+
+</div>
+
+
+
+<!-- TRANSFER -->
+
+<div id="transfer"
+class="card hidden">
+
+<h3>💸 මුදල් Transfer</h3>
+
+<input
+id="receiver"
+type="tel"
+placeholder="ග්‍රාහකයාගේ Phone / Account Number">
+
+<input
+id="receiverName"
+type="text"
+placeholder="ග්‍රාහකයාගේ නම">
+
+<input
+id="transferAmount"
+type="number"
+placeholder="මුදල (රු.)">
+
+<input
+id="transferPin"
+type="password"
+maxlength="4"
+placeholder="Demo PIN">
+
+<button onclick="transferMoney()">
+
+💸 Transfer කරන්න
+
+</button>
+
+</div>
+
+
+
+<!-- RELOAD -->
+
+<div id="reload"
+class="card hidden">
+
+<h3>📱 Mobile Reload</h3>
+
+<input
+id="reloadNumber"
+type="tel"
+placeholder="Mobile Number">
+
+<select id="network">
+
+<option>Dialog</option>
+
+<option>Mobitel</option>
+
+<option>Hutch</option>
+
+<option>Airtel</option>
+
+</select>
+
+<input
+id="reloadAmount"
+type="number"
+placeholder="Reload Amount">
+
+<button onclick="doReload()">
+
+📱 Reload කරන්න
+
+</button>
+
+</div>
+
+
+
+<!-- BILL -->
+
+<div id="bill"
+class="card hidden">
+
+<h3>🧾 Bill Payment</h3>
+
+<select id="billType">
+
+<option>Electricity Bill</option>
+
+<option>Water Bill</option>
+
+<option>Internet Bill</option>
+
+<option>Telephone Bill</option>
+
+</select>
+
+<input
+id="customerNumber"
+type="text"
+placeholder="Customer / Account Number">
+
+<input
+id="billAmount"
+type="number"
+placeholder="Bill Amount">
+
+<button onclick="payBill()">
+
+🧾 Bill එක ගෙවන්න
+
+</button>
+
+</div>
+
+
+
+<!-- BANK -->
+
+<div id="bank"
+class="card hidden">
+
+<h3>🏦 Bank Account</h3>
+
+<input
+id="bankName"
+type="text"
+placeholder="Bank Name">
+
+<input
+id="holderName"
+type="text"
+placeholder="Account Holder Name">
+
+<input
+id="accountNumber"
+type="text"
+placeholder="Account Number">
+
+<input
+id="branch"
+type="text"
+placeholder="Branch">
+
+<button onclick="saveBank()">
+
+🏦 Account Save කරන්න
+
+</button>
+
+</div>
+
+
+
+<!-- HISTORY -->
+
+<div id="history"
+class="card hidden">
+
+<h3>📜 Transaction History</h3>
+
+<div id="transactions">
+
+<div class="transaction">
+
+<span>
+Demo Account Opening
+</span>
+
+<b class="received">
++ රු.100,000
+</b>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- MESSAGES -->
+
+<div id="messages"
+class="card hidden">
+
+<h3>🔔 Messages</h3>
+
+<div id="messageList">
+
+<div class="message">
+
+<b>
+💳 Ceylon Pay DEMO
+</b>
+
+<p>
+ඔබගේ Demo Account එක සූදානම්.
+</p>
+
+<small>
+Demo notification
+</small>
+
+</div>
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<footer>
+
+© 2026 Ceylon Pay — Demo Payment Website
+
+</footer>
+
+
+
+<script>
+
+let balance = 100000;
+
+
+/* OPEN SECTION */
+
+function openSection(id){
+
+document
+.querySelectorAll(".card")
+.forEach(card => {
+
+card.classList.add("hidden");
+
+});
+
+document
+.getElementById(id)
+.classList.remove("hidden");
+
+window.scrollTo({
+
+top:
+document.getElementById(id).offsetTop - 10,
+
+behavior:"smooth"
+
+});
+
+}
+
+
+/* BALANCE */
+
+function updateBalance(){
+
+document
+.getElementById("balance")
+.innerText =
+
+"රු. " +
+
+balance.toLocaleString("en-US",{
+
+minimumFractionDigits:2
+
+});
+
+}
+
+
+/* TRANSFER */
+
+function transferMoney(){
+
+let receiver =
+document.getElementById("receiver")
+.value.trim();
+
+let name =
+document.getElementById("receiverName")
+.value.trim();
+
+let amount =
+Number(
+document.getElementById("transferAmount")
+.value
+);
+
+let pin =
+document.getElementById("transferPin")
+.value.trim();
+
+
+if(!receiver || !name || !amount || !pin){
+
+alert(
+"කරුණාකර සියලු තොරතුරු ඇතුළත් කරන්න."
+);
+
+return;
+
+}
+
+
+if(pin.length !== 4){
+
+alert(
+"Demo PIN එක අංක 4ක් විය යුතුයි."
+);
+
+return;
+
+}
+
+
+if(amount <= 0){
+
+alert(
+"නිවැරදි මුදලක් ඇතුළත් කරන්න."
+);
+
+return;
+
+}
+
+
+if(amount > balance){
+
+alert(
+"Demo Balance එක ප්‍රමාණවත් නැහැ."
+);
+
+return;
+
+}
+
+
+/* DEMO BALANCE */
+
+balance -= amount;
+
+updateBalance();
+
+
+/* HISTORY */
+
+addTransaction(
+
+"Demo Transfer - " + name,
+
+"- රු." +
+amount.toLocaleString(),
+
+"sent"
+
+);
+
+
+/* MESSAGE */
+
+addMessage(
+
+"💸 Demo Transfer",
+
+"ග්‍රාහකයා: " +
+name +
+
+"<br>Phone / Account: " +
+receiver +
+
+"<br>Amount: රු." +
+amount.toLocaleString() +
+
+"<br><br>✅ Demo transaction recorded."
+
+);
+
+
+/* SUCCESS */
+
+alert(
+
+"✅ Demo Transfer Successful!\n\n" +
+
+"ග්‍රාහකයා: " +
+name +
+
+"\nමුදල: රු." +
+amount.toLocaleString() +
+
+"\n\n🔔 Demo notification එක Messages වලට එකතු කළා."
+
+);
+
+
+/* CLEAR */
+
+document.getElementById("receiver").value="";
+document.getElementById("receiverName").value="";
+document.getElementById("transferAmount").value="";
+document.getElementById("transferPin").value="";
+
+
+openSection("messages");
+
+}
+
+
+/* RELOAD */
+
+function doReload(){
+
+let number =
+document.getElementById("reloadNumber")
+.value.trim();
+
+let amount =
+Number(
+document.getElementById("reloadAmount")
+.value
+);
+
+let network =
+document.getElementById("network")
+.value;
+
+
+if(!number || !amount){
+
+alert(
+"Mobile number සහ amount ඇතුළත් කරන්න."
+);
+
+return;
+
+}
+
+
+if(amount > balance){
+
+alert(
+"Demo Balance එක ප්‍රමාණවත් නැහැ."
+);
+
+return;
+
+}
+
+
+balance -= amount;
+
+updateBalance();
+
+
+addTransaction(
+
+"Demo Reload - " +
+network +
+
+" - " +
+number,
+
+"- රු." +
+amount.toLocaleString(),
+
+"sent"
+
+);
+
+
+addMessage(
+
+"📱 Demo Reload",
+
+"Network: " +
+network +
+
+"<br>Number: " +
+number +
+
+"<br>Amount: රු." +
+amount.toLocaleString()
+
+);
+
+
+alert(
+"✅ Demo Reload Successful!"
+);
+
+}
+
+
+/* BILL PAYMENT */
+
+function payBill(){
+
+let type =
+document.getElementById("billType")
+.value;
+
+let customer =
+document.getElementById("customerNumber")
+.value.trim();
+
+let amount =
+Number(
+document.getElementById("billAmount")
+.value
+);
+
+
+if(!customer || !amount){
+
+alert(
+"Customer number සහ amount ඇතුළත් කරන්න."
+);
+
+return;
+
+}
+
+
+if(amount > balance){
+
+alert(
+"Demo Balance එක ප්‍රමාණවත් නැහැ."
+);
+
+return;
+
+}
+
+
+balance -= amount;
+
+updateBalance();
+
+
+addTransaction(
+
+"Demo " + type,
+
+"- රු." +
+amount.toLocaleString(),
+
+"sent"
+
+);
+
+
+addMessage(
+
+"🧾 Demo Bill Payment",
+
+type +
+
+"<br>Customer: " +
+customer +
+
+"<br>Amount: රු." +
+amount.toLocaleString()
+
+);
+
+
+alert(
+"✅ Demo Bill Payment Successful!"
+);
+
+}
+
+
+/* BANK */
+
+function saveBank(){
+
+let bank =
+document.getElementById("bankName")
+.value.trim();
+
+let holder =
+document.getElementById("holderName")
+.value.trim();
+
+let account =
+document.getElementById("accountNumber")
+.value.trim();
+
+let branch =
+document.getElementById("branch")
+.value.trim();
+
+
+if(!bank || !holder || !account || !branch){
+
+alert(
+"කරුණාකර සියලු Bank තොරතුරු ඇතුළත් කරන්න."
+);
+
+return;
+
+}
+
+
+alert(
+
+"✅ Demo Bank Account Saved!\n\n" +
+
+"Bank: " + bank +
+
+"\nHolder: " + holder +
+
+"\nAccount: ****" +
+account.slice(-4) +
+
+"\nBranch: " + branch +
+
+"\n\n⚠️ මෙය සැබෑ බැංකුවකට සම්බන්ධ නැත."
+
+);
+
+}
+
+
+/* HISTORY */
+
+function addTransaction(
+
+title,
+amount,
+type
+
+){
+
+let box =
+document.getElementById("transactions");
+
+let item =
+document.createElement("div");
+
+item.className =
+"transaction";
+
+item.innerHTML =
+
+"<span>" +
+title +
+"</span>" +
+
+"<b class='" +
+type +
+"'>" +
+
+amount +
+
+"</b>";
+
+box.prepend(item);
+
+}
+
+
+/* MESSAGE */
+
+function addMessage(
+
+title,
+text
+
+){
+
+let box =
+document.getElementById("messageList");
+
+let item =
+document.createElement("div");
+
+item.className =
+"message";
+
+item.innerHTML =
+
+"<b>" +
+title +
+"</b>" +
+
+"<p>" +
+text +
+"</p>" +
+
+"<small>" +
+new Date().toLocaleString("si-LK") +
+"</small>";
+
+box.prepend(item);
+
+}
+
+</script>
+
+</body>
+</html>
