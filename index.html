@@ -1,1 +1,557 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>Ceylon Pay Demo</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f3f3f3;
+      color: #222;
+    }
+
+    /* HEADER */
+    .header {
+      height: 65px;
+      background: #d32f2f;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      box-shadow: 0 2px 8px #999;
+    }
+
+    .header h2 {
+      font-size: 21px;
+    }
+
+    .notification {
+      font-size: 25px;
+      cursor: pointer;
+    }
+
+    /* MAIN */
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px 16px 90px;
+    }
+
+    .welcome {
+      font-size: 23px;
+      font-weight: bold;
+      margin-bottom: 18px;
+    }
+
+    /* BALANCE CARD */
+    .balance-card {
+      background: #d32f2f;
+      color: white;
+      padding: 22px;
+      border-radius: 20px;
+      box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+      margin-bottom: 28px;
+    }
+
+    .balance-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #ffffffcc;
+      font-size: 16px;
+    }
+
+    .eye {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .balance {
+      font-size: 29px;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+
+    .account {
+      color: #ffffffcc;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    /* SERVICES */
+    .section-title {
+      font-size: 19px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .services {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .service {
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .service-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 25px;
+    }
+
+    .blue {
+      background: #e3f2fd;
+      color: #1976d2;
+    }
+
+    .green {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .orange {
+      background: #fff3e0;
+      color: #ef6c00;
+    }
+
+    .purple {
+      background: #f3e5f5;
+      color: #8e24aa;
+    }
+
+    .service p {
+      font-size: 12px;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+
+    /* TRANSACTIONS */
+    .transaction {
+      background: white;
+      border-radius: 12px;
+      margin: 8px 0;
+      padding: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.08);
+    }
+
+    .transaction-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .transaction-icon {
+      width: 43px;
+      height: 43px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .transaction-title {
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    .date {
+      color: #777;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .amount {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .red-text {
+      color: #d32f2f;
+    }
+
+    .green-text {
+      color: #2e7d32;
+    }
+
+    /* BOTTOM NAVIGATION */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.15);
+      z-index: 10;
+    }
+
+    .nav-item {
+      text-align: center;
+      color: #777;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .nav-item.active {
+      color: #d32f2f;
+      font-weight: bold;
+    }
+
+    .nav-icon {
+      font-size: 23px;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    /* POPUP */
+    .popup {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+    }
+
+    .popup-box {
+      background: white;
+      width: 90%;
+      max-width: 400px;
+      padding: 25px;
+      border-radius: 18px;
+      text-align: center;
+    }
+
+    .popup-box h3 {
+      margin-bottom: 12px;
+    }
+
+    .popup-box button {
+      margin-top: 18px;
+      padding: 10px 25px;
+      border: none;
+      background: #d32f2f;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 400px) {
+      .service-icon {
+        width: 50px;
+        height: 50px;
+      }
+
+      .service p {
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <h2>Ceylon Pay</h2>
+    <div class="notification" onclick="showPopup('දැනුම්දීම්')">
+      🔔
+    </div>
+  </div>
+
+
+  <!-- MAIN -->
+  <div class="container">
+
+    <div class="welcome">
+      ආයුබෝවන්, නිමල්!
+    </div>
+
+
+    <!-- BALANCE -->
+    <div class="balance-card">
+
+      <div class="balance-top">
+        <span>ගිණුම් ශේෂය</span>
+
+        <button class="eye" onclick="toggleBalance()">
+          👁️
+        </button>
+      </div>
+
+      <div class="balance" id="balance">
+        LKR 125,450.00
+      </div>
+
+      <div class="account">
+        Demo Account
+      </div>
+
+    </div>
+
+
+    <!-- SERVICES -->
+    <div class="section-title">
+      ක්ෂණික සේවාවන්
+    </div>
+
+    <div class="services">
+
+      <div class="service" onclick="showPopup('මුදල් යවන්න')">
+        <div class="service-icon blue">
+          ➤
+        </div>
+        <p>මුදල් යවන්න</p>
+      </div>
+
+      <div class="service" onclick="showPopup('Mobile Reload')">
+        <div class="service-icon green">
+          📱
+        </div>
+        <p>Reload</p>
+      </div>
+
+      <div class="service" onclick="showPopup('Bill Payment')">
+        <div class="service-icon orange">
+          🧾
+        </div>
+        <p>Bills</p>
+      </div>
+
+      <div class="service" onclick="showPopup('QR Payment')">
+        <div class="service-icon purple">
+          ▣
+        </div>
+        <p>QR Pay</p>
+      </div>
+
+    </div>
+
+
+    <!-- TRANSACTIONS -->
+    <div class="section-title">
+      මෑත ගනුදෙනු
+    </div>
+
+
+    <div class="transaction">
+
+      <div class="transaction-left">
+
+        <div class="transaction-icon" style="background:#ffebee;color:#d32f2f;">
+          ↑
+        </div>
+
+        <div>
+          <div class="transaction-title">
+            Electricity Bill
+          </div>
+
+          <div class="date">
+            Today
+          </div>
+        </div>
+
+      </div>
+
+      <div class="amount red-text">
+        - LKR 3,200.00
+      </div>
+
+    </div>
+
+
+    <div class="transaction">
+
+      <div class="transaction-left">
+
+        <div class="transaction-icon" style="background:#e8f5e9;color:#2e7d32;">
+          ↓
+        </div>
+
+        <div>
+          <div class="transaction-title">
+            Salary Deposit
+          </div>
+
+          <div class="date">
+            Yesterday
+          </div>
+        </div>
+
+      </div>
+
+      <div class="amount green-text">
+        + LKR 85,000.00
+      </div>
+
+    </div>
+
+
+    <div class="transaction">
+
+      <div class="transaction-left">
+
+        <div class="transaction-icon" style="background:#ffebee;color:#d32f2f;">
+          ↑
+        </div>
+
+        <div>
+          <div class="transaction-title">
+            Supermarket
+          </div>
+
+          <div class="date">
+            25 Aug
+          </div>
+        </div>
+
+      </div>
+
+      <div class="amount red-text">
+        - LKR 4,150.00
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+
+    <div class="nav-item active"
+         onclick="showPopup('මුල් පිටුව')">
+      <span class="nav-icon">⌂</span>
+      මුල් පිටුව
+    </div>
+
+    <div class="nav-item"
+         onclick="showPopup('Transfer')">
+      <span class="nav-icon">⇄</span>
+      Transfer
+    </div>
+
+    <div class="nav-item"
+         onclick="showPopup('History')">
+      <span class="nav-icon">◷</span>
+      History
+    </div>
+
+    <div class="nav-item"
+         onclick="showPopup('Profile')">
+      <span class="nav-icon">♙</span>
+      Profile
+    </div>
+
+  </div>
+
+
+  <!-- POPUP -->
+  <div class="popup" id="popup">
+
+    <div class="popup-box">
+
+      <h3 id="popupTitle">
+        Ceylon Pay
+      </h3>
+
+      <p>
+        මෙය Demo සේවාවකි.
+      </p>
+
+      <button onclick="closePopup()">
+        හරි
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    let balanceVisible = true;
+
+    function toggleBalance() {
+
+      const balance =
+        document.getElementById("balance");
+
+      if (balanceVisible) {
+
+        balance.innerText =
+          "LKR ********";
+
+        balanceVisible = false;
+
+      } else {
+
+        balance.innerText =
+          "LKR 125,450.00";
+
+        balanceVisible = true;
+      }
+    }
+
+
+    function showPopup(title) {
+
+      document.getElementById("popupTitle")
+        .innerText = title;
+
+      document.getElementById("popup")
+        .style.display = "flex";
+    }
+
+
+    function closePopup() {
+
+      document.getElementById("popup")
+        .style.display = "none";
+    }
+
+
+    document.getElementById("popup")
+      .addEventListener("click", function(event) {
+
+        if (event.target === this) {
+          closePopup();
+        }
+
+      });
+
+  </script>
+
+</body>
+</html>
