@@ -1,1 +1,92 @@
+async function sendMoney() {
 
+  const phone =
+    document.getElementById("phone").value.trim();
+
+  const name =
+    document.getElementById("name").value.trim();
+
+  const amount =
+    Number(document.getElementById("amount").value);
+
+  const pin =
+    document.getElementById("pin").value.trim();
+
+  if (!phone || !name || !amount || !pin) {
+    alert("කරුණාකර සියලු තොරතුරු ඇතුළත් කරන්න.");
+    return;
+  }
+
+  if (pin.length !== 4) {
+    alert("Demo PIN එක අංක 4ක් විය යුතුයි.");
+    return;
+  }
+
+  if (amount <= 0) {
+    alert("නිවැරදි මුදලක් ඇතුළත් කරන්න.");
+    return;
+  }
+
+  if (amount > balance) {
+    alert("Balance එක ප්‍රමාණවත් නැහැ.");
+    return;
+  }
+
+  /*
+   * මෙහි සැබෑ payment confirmation එකක්
+   * තිබෙන විට පමණක් SMS යැවිය යුතුයි.
+   */
+
+  const message =
+    "Ceylon Pay: DEMO notification. " +
+    name +
+    ", රු." +
+    amount.toLocaleString() +
+    " ක transaction එකක් සටහන් විය. " +
+    "මෙය DEMO message එකකි.";
+
+  try {
+
+    const response =
+      await fetch("/send-sms", {
+
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
+
+        body: JSON.stringify({
+          phone: phone,
+          message: message
+        })
+      });
+
+    const result =
+      await response.json();
+
+    if (!result.success) {
+
+      alert(
+        "SMS යැවීම අසාර්ථකයි."
+      );
+
+      return;
+    }
+
+    balance -= amount;
+
+    updateBalance();
+
+    alert(
+      "✅ SMS එක යැවීම සඳහා gateway එකට ලබා දුන්නා."
+    );
+
+  } catch (error) {
+
+    alert(
+      "SMS server එකට සම්බන්ධ වීමට බැරි වුණා."
+    );
+  }
+}
