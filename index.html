@@ -1,1 +1,334 @@
+import 'package:flutter/material.dart';
 
+void main() {
+  runApp(const CeylonPayApp());
+}
+
+class CeylonPayApp extends StatelessWidget {
+  const CeylonPayApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Ceylon Pay Demo',
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.red,
+      ),
+      home: const HomeScreen(),
+    );
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  bool balanceVisible = true;
+  double balance = 125450.00;
+
+  final List<Map<String, dynamic>> transactions = [
+    {
+      'title': 'Electricity Bill',
+      'amount': '- LKR 3,200.00',
+      'date': 'Today',
+      'color': Colors.red,
+      'icon': Icons.arrow_upward,
+    },
+    {
+      'title': 'Salary Deposit',
+      'amount': '+ LKR 85,000.00',
+      'date': 'Yesterday',
+      'color': Colors.green,
+      'icon': Icons.arrow_downward,
+    },
+    {
+      'title': 'Supermarket',
+      'amount': '- LKR 4,150.00',
+      'date': '25 Aug',
+      'color': Colors.red,
+      'icon': Icons.arrow_upward,
+    },
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey.shade100,
+
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFD32F2F),
+        title: const Text(
+          'Ceylon Pay',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.notifications,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+
+            const Text(
+              'ආයුබෝවන්, නිමල්!',
+              style: TextStyle(
+                fontSize: 23,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 18),
+
+            // Balance Card
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(22),
+              decoration: BoxDecoration(
+                color: const Color(0xFFD32F2F),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.15),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'ගිණුම් ශේෂය',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 16,
+                        ),
+                      ),
+
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            balanceVisible = !balanceVisible;
+                          });
+                        },
+                        icon: Icon(
+                          balanceVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  Text(
+                    balanceVisible
+                        ? 'LKR ${balance.toStringAsFixed(2)}'
+                        : 'LKR ********',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  const Text(
+                    'Demo Account',
+                    style: TextStyle(
+                      color: Colors.white70,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 28),
+
+            const Text(
+              'ක්ෂණික සේවාවන්',
+              style: TextStyle(
+                fontSize: 19,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 15),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+
+                _actionButton(
+                  Icons.send,
+                  'මුදල් යවන්න',
+                  Colors.blue,
+                  () => _showDemoMessage('මුදල් යැවීම Demo එකකි'),
+                ),
+
+                _actionButton(
+                  Icons.phone_android,
+                  'Reload',
+                  Colors.green,
+                  () => _showDemoMessage('Mobile Reload Demo'),
+                ),
+
+                _actionButton(
+                  Icons.receipt_long,
+                  'Bills',
+                  Colors.orange,
+                  () => _showDemoMessage('Bill Payment Demo'),
+                ),
+
+                _actionButton(
+                  Icons.qr_code_scanner,
+                  'QR Pay',
+                  Colors.purple,
+                  () => _showDemoMessage('QR Payment Demo'),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 28),
+
+            const Text(
+              'මෑත ගනුදෙනු',
+              style: TextStyle(
+                fontSize: 19,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            ...transactions.map(
+              (transaction) => Card(
+                margin: const EdgeInsets.symmetric(vertical: 5),
+                child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor:
+                        transaction['color'].withOpacity(0.12),
+                    child: Icon(
+                      transaction['icon'],
+                      color: transaction['color'],
+                    ),
+                  ),
+
+                  title: Text(
+                    transaction['title'],
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  subtitle: Text(
+                    transaction['date'],
+                  ),
+
+                  trailing: Text(
+                    transaction['amount'],
+                    style: TextStyle(
+                      color: transaction['color'],
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: 0,
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home),
+            label: 'මුල් පිටුව',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.swap_horiz),
+            label: 'Transfer',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.history),
+            label: 'History',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            label: 'Profile',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _actionButton(
+    IconData icon,
+    String label,
+    Color color,
+    VoidCallback onTap,
+  ) {
+    return GestureDetector(
+      onTap: onTap,
+      child: SizedBox(
+        width: 78,
+        child: Column(
+          children: [
+            CircleAvatar(
+              radius: 28,
+              backgroundColor: color.withOpacity(0.12),
+              child: Icon(
+                icon,
+                color: color,
+                size: 27,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showDemoMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+}
